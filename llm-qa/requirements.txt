@@ -4,6 +4,7 @@ openai
 tiktoken
 faiss-cpu
 google-cloud-storage
+grpcio
 unstructured[all-docs]
 requests
 Pillow
