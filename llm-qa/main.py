@@ -21,25 +21,25 @@ from PIL import Image
 from io import BytesIO
 
 # Streamlit page config
-st.set_page_config(page_title="MoradaUno Chatbot", page_icon="🤖")
+st.set_page_config(page_title="Hannah Bonvoy", page_icon="🤖")
 
 # Page title
-st.title("MoradaUno Chatbot 🤖")
+st.title("Hannah Bonvoy 🤖")
 
 # Load M1 image
 response_img = requests.get("https://github.com/fernando-m1/ai-m1/raw/main/llm-qa/M1-icon-whiteborder.png")
 img = Image.open(BytesIO(response_img.content))
 
 # Define functions
-def text_splitter():
+def text_splitter_func():
   return RecursiveCharacterTextSplitter(
     separators=["#","##", "###", "\n\n", "####","\n","."],
     chunk_size=1500,
     chunk_overlap=500,
   )
 
-def gcs_loader(bucket, project_name, text_splitter, prefix=None):
-    loader = GCSDirectoryLoader(bucket=bucket, project_name=project_name, prefix=prefix, loader_func=UnstructuredMarkdownLoader)
+def gcs_loader(bucket, project_name, text_splitter):
+    loader = GCSDirectoryLoader(bucket=bucket, project_name=project_name, loader_func=UnstructuredMarkdownLoader)
     docs = loader.load_and_split(text_splitter)
     return docs
   
@@ -50,17 +50,17 @@ def create_retriever(docs, top_k_results):
   return retriever
   
 # Load documents
-text_splitter = text_splitter()
+text_splitter = text_splitter_func()
 gcs_project_name = "legal-ai-m1"
 gcs_bucket = "moradauno-corpus-demo"
 
-m1_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter, prefix='M1_General/')
-productos_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter, prefix='Productos/')
-legal_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter, prefix='Legal/')
-m1app_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter, prefix='M1App/')
+m1_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter)
+productos_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter)
+legal_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter)
+m1app_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter)
 
 # Create retrievers
-llm = ChatOpenAI(temperature=0, streaming=True, model_name="gpt-4")
+llm = ChatOpenAI(temperature=0, streaming=True, model="gpt-4")
 embedding = OpenAIEmbeddings()
 
 m1_retriever = create_retriever(m1_docs, 3) 
@@ -112,6 +112,7 @@ m1_qa = ConversationalRetrievalChain(
   retriever=m1_retriever,
   memory=chain_memory,
   combine_docs_chain=final_qa_chain,
+  response_if_no_docs_found=None
 )
 
 productos_qa = ConversationalRetrievalChain(
@@ -119,6 +120,7 @@ productos_qa = ConversationalRetrievalChain(
   retriever=productos_retriever,
   memory=chain_memory,
   combine_docs_chain=final_qa_chain,
+  response_if_no_docs_found=None,
 )
 
 legal_qa = ConversationalRetrievalChain(
@@ -126,6 +128,7 @@ legal_qa = ConversationalRetrievalChain(
   retriever=legal_retriever,
   memory=chain_memory,
   combine_docs_chain=final_qa_chain,
+  response_if_no_docs_found=None,
 )
 
 m1app_qa = ConversationalRetrievalChain(
@@ -133,6 +136,7 @@ m1app_qa = ConversationalRetrievalChain(
   retriever=m1app_retriever,
   memory=chain_memory,
   combine_docs_chain=final_qa_chain,
+  response_if_no_docs_found=None,
 )
 
 # Agent setup
