@@ -27,8 +27,14 @@ st.set_page_config(page_title="Hannah Bonvoy", page_icon="🤖")
 st.title("Hannah Bonvoy 🤖")
 
 # Load M1 image
-response_img = requests.get("https://github.com/a01110946/hannah_bonvoy/blob/d2732e956da97213cdcb040f853283697bf67fd4/llm-qa/assets/images/FPbS_logo.png")
-img = Image.open(BytesIO(response_img.content))
+response_img = requests.get("https://raw.githubusercontent.com/a01110946/hannah_bonvoy/d2732e956da97213cdcb040f853283697bf67fd4/llm-qa/assets/images/FPbS_logo.png")
+
+# Ensure that the request was successful and the content is indeed an image
+if response_img.status_code == 200:
+    img = Image.open(BytesIO(response_img.content))
+else:
+    raise ValueError("Could not retrieve the image - HTTP status code: {}".format(response_img.status_code))
+
 
 # Define functions
 def text_splitter_func():
