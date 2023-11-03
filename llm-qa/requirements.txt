@@ -5,6 +5,7 @@ tiktoken
 faiss-cpu
 google-cloud-storage
 grpcio
+google-api-core
 unstructured[all-docs]
 requests
 Pillow
