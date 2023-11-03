@@ -27,7 +27,7 @@ st.set_page_config(page_title="Hannah Bonvoy", page_icon="🤖")
 st.title("Hannah Bonvoy 🤖")
 
 # Load M1 image
-response_img = requests.get("https://github.com/a01110946/hannah_bonvoy/blob/main/llm-qa/assets/images/FPbS_logo.png")
+response_img = requests.get("https://github.com/a01110946/hannah_bonvoy/blob/d2732e956da97213cdcb040f853283697bf67fd4/llm-qa/assets/images/FPbS_logo.png")
 img = Image.open(BytesIO(response_img.content))
 
 # Define functions
