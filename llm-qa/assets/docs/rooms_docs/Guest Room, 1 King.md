@@ -1,4 +1,4 @@
-# Guest room, 1 King, River view
+# Guest Room, 1 King
 
 ## Beds and Bedding
 
@@ -26,8 +26,6 @@
 
 - Room service
 - Bottled water, complimentary
-- Coffee/tea maker
-- Minibar, Complimentary
 
 ## Kitchen Features
 
@@ -53,7 +51,6 @@
 ## Special Benefits
 
 - High-speed Wi-Fi
-- Business services, for a fee
 
 ## Room Features
 
@@ -61,11 +58,10 @@
 - Air-conditioned
 - Smoking policy: This room is non-smoking
 - Living/sitting area
-- Hooks
 - USB outlets
 
 ## Accessible Room Features
 
-- This room type does not offer mobility accessible rooms
-- This room type does not offer accessible rooms with roll-in showers
+- This room type offers mobility accessible rooms
+- This room type offers accessible rooms with roll-in showers
 - This room type does not offer hearing accessible rooms
