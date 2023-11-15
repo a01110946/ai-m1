@@ -45,7 +45,7 @@ def text_splitter_func():
   )
 
 def gcs_loader(bucket, project_name, text_splitter):
-    loader = GCSDirectoryLoader(bucket=bucket, project_name=project_name, loader_func=UnstructuredMarkdownLoader)
+    loader = GCSDirectoryLoader(bucket=bucket, project_name=project_name, prefix=None, loader_func=UnstructuredMarkdownLoader)
     docs = loader.load_and_split(text_splitter)
     return docs
   
@@ -54,25 +54,36 @@ def create_retriever(docs, top_k_results):
   vectorstore = FAISS.from_documents(docs, embeddings)
   retriever = vectorstore.as_retriever(search_kwargs={"k": top_k_results})
   return retriever
+
+# Define a function to load and process JSON data
+def load_reservations(file_path):
+    # Initialize JSONLoader
+    loader = JSONLoader(
+        file_path=file_path,
+        jq_schema='.[].{reservation_id: .reservation_id, guest_name: .guest_name, room_type: .room_type, room_number: .room_number, check_in: .check_in, check_out: .check_out, special_requests: .special_requests, contact_email: .contact_email, birthdate: .birthdate, identification_document: .identification_document, identification_number: .identification_number, nationality: .nationality, identity_verification: .identity_verification}',
+        text_content=False
+    )
+    data = loader.load()
+    return data
   
 # Load documents
 text_splitter = text_splitter_func()
 gcs_project_name = "legal-ai-m1"
-gcs_bucket = "moradauno-corpus-demo"
+gcs_bucket = "hannah-bonvoy"
+hotel_docs_prefix = "hotel_docs/"
+rooms_docs_prefix = "rooms_docs/"
 
-m1_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter)
-productos_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter)
-legal_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter)
-m1app_docs = gcs_loader(gcs_bucket, gcs_project_name, text_splitter)
+hotel_docs = gcs_loader(gcs_bucket, gcs_project_name, hotel_docs_prefix, text_splitter)
+rooms_docs = gcs_loader(gcs_bucket, gcs_project_name, rooms_docs_prefix, text_splitter)
+reservation_docs = load_reservations("assets/reservations_docs/reservations.json")
 
 # Create retrievers
 llm = ChatOpenAI(temperature=0, streaming=True, model="gpt-4")
 embedding = OpenAIEmbeddings()
 
-m1_retriever = create_retriever(m1_docs, 3) 
-productos_retriever = create_retriever(productos_docs, 6)
-legal_retriever = create_retriever(legal_docs, 10)
-m1app_retriever = create_retriever(m1app_docs, 5)
+hotel_retriever = create_retriever(hotel_docs, 3) 
+rooms_retriever = create_retriever(rooms_docs, 3)
+reservations_retriever = create_retriever(reservation_docs, 2)
 
 # Define chains
 chain_memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
@@ -110,33 +121,25 @@ final_qa_chain = StuffDocumentsChain(
   document_prompt=doc_prompt,
 )
 
-m1_qa = ConversationalRetrievalChain(
+hotel_qa = ConversationalRetrievalChain(
   question_generator=condense_question_chain,
-  retriever=m1_retriever,
+  retriever=hotel_retriever,
   memory=chain_memory,
   combine_docs_chain=final_qa_chain,
   response_if_no_docs_found=None
 )
 
-productos_qa = ConversationalRetrievalChain(
+rooms_qa = ConversationalRetrievalChain(
   question_generator=condense_question_chain,
-  retriever=productos_retriever,
+  retriever=rooms_retriever,
   memory=chain_memory,
   combine_docs_chain=final_qa_chain,
   response_if_no_docs_found=None,
 )
 
-legal_qa = ConversationalRetrievalChain(
+reservations_qa = ConversationalRetrievalChain(
   question_generator=condense_question_chain,
-  retriever=legal_retriever,
-  memory=chain_memory,
-  combine_docs_chain=final_qa_chain,
-  response_if_no_docs_found=None,
-)
-
-m1app_qa = ConversationalRetrievalChain(
-  question_generator=condense_question_chain,
-  retriever=m1app_retriever,
+  retriever=reservations_retriever,
   memory=chain_memory,
   combine_docs_chain=final_qa_chain,
   response_if_no_docs_found=None,
@@ -171,26 +174,22 @@ prompt = OpenAIFunctionsAgent.create_prompt(
   extra_prompt_messages=[MessagesPlaceholder(variable_name="chat_history"), MessagesPlaceholder(variable_name="agent_scratchpad")],
 )
 
+# Create tools
 tools = [
     Tool(
-        name="MoradaUno_General_Information_QA_System",
-        func=m1_qa.run,
-        description="useful for when you need to answer questions at a high-level about MoradaUno. Input should be a fully formed question, not referencing any obscure pronouns from the conversation before. Always answer in Spanish.",
+        name="FourPoints_General_Information_QA_System",
+        func=hotel_qa.run,
+        description="useful for when you need to answer questions at a high-level about Four Points by Sheraton hotel at Singapore. Input should be a fully formed question, not referencing any obscure pronouns from the conversation before. Always answer back in the same language the user is writing.",
     ),
     Tool(
-        name="MoradaUno_Products_and_Services_QA_System",
-        func=productos_qa.run,
-        description="useful for when you need to answer questions about MoradaUno's products and services, specially if details and specifications are needed. Input should be a fully formed question, not referencing any obscure pronouns from the conversation before. Always answer in Spanish.",
+        name="FourPoints_Rooms_and_Suites_QA_System",
+        func=rooms_qa.run,
+        description="useful for when you need to answer questions about the rooms and suites at Four Points by Sheraton hotel at Singapore, specially if details and specifications are needed. Input should be a fully formed question, not referencing any obscure pronouns from the conversation before. Always answer back in the same language the user is writing.",
     ),
     Tool(
-        name="Legal_QA_System",
-        func=legal_qa.run,
-        description="useful for when you need to answer legal questions. Input should be a fully formed question, not referencing any obscure pronouns from the conversation before. Always answer in Spanish.",
-    ),
-    Tool(
-        name="M1App_QA_System",
-        func=m1app_qa.run,
-        description="useful for when you need to answer questions about MoradaUno's M1App, or about a service's procedure. This tool includes a step-by-step guide on how to complete a MoradaUno's tenant screening or rent protection. Input should be a fully formed question, not referencing any obscure pronouns from the conversation before. Always answer in Spanish.",
+        name="FourPoints_Reservations_Query_System",
+        func=reservations_qa.run,
+        description="useful for when you need to retrieve information about a room reservation at Four Points by Sheraton hotel at Singapore, specially if details and specifications are needed. Input should be a fully formed question, not referencing any obscure pronouns from the conversation before. Always answer back in the same language the user is writing.",
     ),
 ]
 
