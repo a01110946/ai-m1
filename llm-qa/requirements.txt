@@ -9,3 +9,4 @@ google-api-core
 unstructured[all-docs]
 requests
 Pillow
+jq
