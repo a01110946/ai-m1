@@ -44,7 +44,7 @@ def text_splitter_func():
     chunk_overlap=500,
   )
 
-def gcs_loader(bucket, project_name, prefix=None, text_splitter):
+def gcs_loader(bucket, project_name, prefix, text_splitter):
     loader = GCSDirectoryLoader(bucket=bucket, project_name=project_name, prefix=prefix, loader_func=UnstructuredMarkdownLoader)
     docs = loader.load_and_split(text_splitter)
     return docs
