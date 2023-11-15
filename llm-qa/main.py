@@ -75,7 +75,7 @@ rooms_docs_prefix = "rooms_docs/"
 
 hotel_docs = gcs_loader(gcs_bucket, gcs_project_name, hotel_docs_prefix, text_splitter)
 rooms_docs = gcs_loader(gcs_bucket, gcs_project_name, rooms_docs_prefix, text_splitter)
-reservation_docs = load_reservations("assets/reservations_docs/reservations.json")
+reservation_docs = load_reservations("assets/docs/reservations_docs/reservations.json")
 
 # Create retrievers
 llm = ChatOpenAI(temperature=0, streaming=True, model="gpt-4")
