@@ -60,7 +60,7 @@ def load_reservations(file_path):
     # Initialize JSONLoader
     loader = JSONLoader(
         file_path=file_path,
-        jq_schema='.[].{reservation_id: .reservation_id, guest_name: .guest_name, room_type: .room_type, room_number: .room_number, check_in: .check_in, check_out: .check_out, special_requests: .special_requests, contact_email: .contact_email, birthdate: .birthdate, identification_document: .identification_document, identification_number: .identification_number, nationality: .nationality, identity_verification: .identity_verification}',
+        jq_schema = '.[]',
         text_content=False
     )
     data = loader.load()
