@@ -235,12 +235,25 @@ if prompt := st.chat_input(placeholder=starter_message):
     
     # Concatenate history and input
     full_input = "\n".join([msg.content for msg in st.session_state.messages] + [prompt])
+
+    res_box = st.empty()
+    report = []
+    for resp in agent_executor(
+        {"input": full_input},
+        include_run_info=True,
+        )
+        report.append(resp["output"].text)
+        result = "".join(report).strip()
+        result = result.replace("\n", "")
+        res_box.markdown('*{report}*')
     
+    """
     response = agent_executor(
         {"input": full_input},
         include_run_info=True,
     )
     response_content = response["output"]
+    """
     
     # Escape the $ character
     response_content = response_content.replace("$", "\$")
