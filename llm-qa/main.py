@@ -243,10 +243,11 @@ if prompt := st.chat_input(placeholder=starter_message):
         include_run_info=True
     )
     for resp in response:
-        report.append(resp["output"].text)
-        result = "".join(report).strip()
-        result = result.replace("\n", "")
-        res_box.markdown('*{report}*')
+        st.write(resp)
+        #report.append(resp["output"].text)
+        #result = "".join(report).strip()
+        #result = result.replace("\n", "")
+        #res_box.markdown('*{report}*')
     
     """
     response = agent_executor(
