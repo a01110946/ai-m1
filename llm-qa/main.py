@@ -244,8 +244,9 @@ if prompt := st.chat_input(placeholder=starter_message):
     )
     response_content = response["output"]
     for resp in response_content:
-        #st.write(resp)
-        report.append(resp.text)
+        st.write(type(resp))
+        st.write(resp)
+        report.append(resp[0].text)
         #result = "".join(report).strip()
         #result = result.replace("\n", "")
         res_box.markdown('*{report}*')
