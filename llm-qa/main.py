@@ -237,7 +237,6 @@ if prompt := st.chat_input(placeholder=starter_message):
     full_input = "\n".join([msg.content for msg in st.session_state.messages] + [prompt])
 
     res_box = st.empty()
-    report = []
     response = agent_executor(
         {"input": full_input},
         include_run_info=True
@@ -248,31 +247,9 @@ if prompt := st.chat_input(placeholder=starter_message):
     for char in response["output"]:
         result += char  # Append each character to the result string
         res_box.markdown(f'*{result}*')  # Update the display with each new character
-    
-    """
-    response_content = response["output"]
-    for resp in response["output"]:
-        #st.write(resp)  # This will show you the structure of resp in your Streamlit app
-        report.append(resp)
-        result = "".join(report).strip()
-        result = result.replace("\n", "")
-        res_box.markdown(f'*{report}*')
-    
-    
-    response = agent_executor(
-        {"input": full_input},
-        include_run_info=True,
-    )
-    response_content = response["output"]
-    """
-    
+       
     # Escape the $ character
     #response_content = response_content.replace("$", "\$")
 
     st.session_state.messages.append(AIMessage(content=response["output"]))
-    #st.chat_message("assistant", avatar=img).write(report)
-    
-    """
-    st.session_state.messages.append(AIMessage(content=response_content))
-    st.chat_message("assistant", avatar=img).write(response_content)
-    """
+    st.chat_message("assistant", avatar=img).write(result)
