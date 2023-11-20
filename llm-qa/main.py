@@ -238,7 +238,7 @@ if prompt := st.chat_input(placeholder=starter_message):
 
     res_box = st.empty()
     report = []
-    report = agent_executor(
+    response = agent_executor(
         {"input": full_input},
         include_run_info=True
     )
