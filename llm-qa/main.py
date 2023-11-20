@@ -241,15 +241,16 @@ if prompt := st.chat_input(placeholder=starter_message):
         {"input": full_input},
         include_run_info=True
     )
+    response_content =  response["output"]
     
     # Initialize an empty string for the result, to capture each character that will be streamed into the response
-    result = ""
-    for char in response["output"]:
-        result += char  # Append each character to the result string
-        res_box.markdown(f'*{result}*')  # Update the display with each new character
+    #result = ""
+    #for char in response["output"]:
+        #result += char  # Append each character to the result string
+        #res_box.markdown(f'*{result}*')  # Update the display with each new character
        
     # Escape the $ character
-    #response_content = response_content.replace("$", "\$")
+    response_content = response_content.replace("$", "\$")
 
     st.session_state.messages.append(AIMessage(content=response["output"]))
-    #st.chat_message("assistant", avatar=img).write(result)
+    st.chat_message("assistant", avatar=img).write(response_content = )
