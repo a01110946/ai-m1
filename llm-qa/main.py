@@ -242,7 +242,8 @@ if prompt := st.chat_input(placeholder=starter_message):
         {"input": full_input},
         include_run_info=True
     )
-    for resp in response:
+    response_content = response["output"]
+    for resp in response_content:
         st.write(resp)
         #report.append(resp["output"].text)
         #result = "".join(report).strip()
