@@ -245,7 +245,7 @@ if prompt := st.chat_input(placeholder=starter_message):
     #response_content = response["output"]
     for resp in response_content:
         st.write(resp)  # This will show you the structure of resp in your Streamlit app
-        #report.append(resp)
+        report.append(resp)
         #result = "".join(report).strip()
         #result = result.replace("\n", "")
         #res_box.markdown('*{report}*')
@@ -259,7 +259,12 @@ if prompt := st.chat_input(placeholder=starter_message):
     """
     
     # Escape the $ character
-    response_content = response_content.replace("$", "\$")
+    #response_content = response_content.replace("$", "\$")
+
+    st.session_state.messages.append(AIMessage(content=report))
+    st.chat_message("assistant", avatar=img).write(report)
     
+    """
     st.session_state.messages.append(AIMessage(content=response_content))
     st.chat_message("assistant", avatar=img).write(response_content)
+    """
