@@ -243,10 +243,11 @@ if prompt := st.chat_input(placeholder=starter_message):
         include_run_info=True
     )
     
-    # Directly concatenate the response characters
-    result = "".join(response["output"]).strip()
-    result = result.replace("\n", "")
-    res_box.markdown(f'*{result}*')
+    # Initialize an empty string for the result
+    result = ""
+    for char in response["output"]:
+        result += char  # Append each character to the result string
+        res_box.markdown(f'*{result}*')  # Update the display with each new character
     
     """
     response_content = response["output"]
