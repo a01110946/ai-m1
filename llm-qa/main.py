@@ -244,7 +244,7 @@ if prompt := st.chat_input(placeholder=starter_message):
     )
     #response_content = response["output"]
     for resp in response["output"]:
-        st.write(resp["output"])  # This will show you the structure of resp in your Streamlit app
+        st.write(resp)  # This will show you the structure of resp in your Streamlit app
         report.append(resp)
         result = "".join(report).strip()
         result = result.replace("\n", "")
