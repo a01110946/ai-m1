@@ -242,13 +242,13 @@ if prompt := st.chat_input(placeholder=starter_message):
         {"input": full_input},
         include_run_info=True
     )
-    response_content = response["output"]
+    #response_content = response["output"]
     for resp in response_content:
-        #st.write(resp)  # This will show you the structure of resp in your Streamlit app
-        report.append(resp)
-        result = "".join(report).strip()
-        result = result.replace("\n", "")
-        res_box.markdown('*{report}*')
+        st.write(resp)  # This will show you the structure of resp in your Streamlit app
+        #report.append(resp)
+        #result = "".join(report).strip()
+        #result = result.replace("\n", "")
+        #res_box.markdown('*{report}*')
     
     """
     response = agent_executor(
