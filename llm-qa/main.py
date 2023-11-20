@@ -234,7 +234,7 @@ if prompt := st.chat_input(placeholder=starter_message):
     st.session_state.messages.append(HumanMessage(content=prompt))
     
     # Concatenate history and input
-    full_input = "\n".join([msg.content for msg in st.session_state.messages] + [prompt])
+    # full_input = "\n".join([msg.content for msg in st.session_state.messages] + [prompt])
 
     res_box = st.empty()
     report = []
