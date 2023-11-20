@@ -248,7 +248,7 @@ if prompt := st.chat_input(placeholder=starter_message):
         report.append(resp)
         result = "".join(report).strip()
         result = result.replace("\n", "")
-        res_box.markdown('*{report}*')
+        res_box.markdown(f'*{report}*')
     
     """
     response = agent_executor(
