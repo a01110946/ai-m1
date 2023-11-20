@@ -238,9 +238,11 @@ if prompt := st.chat_input(placeholder=starter_message):
 
     res_box = st.empty()
     report = []
-    for resp in agent_executor(
+    report = agent_executor(
         {"input": full_input},
-        include_run_info=True)
+        include_run_info=True
+    )
+    for resp in response:
         report.append(resp["output"].text)
         result = "".join(report).strip()
         result = result.replace("\n", "")
