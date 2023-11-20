@@ -247,6 +247,7 @@ if prompt := st.chat_input(placeholder=starter_message):
         #st.write(resp)  # This will show you the structure of resp in your Streamlit app
         report.append(resp)
         result = "".join(report).strip()
+        result = "".join(report).strip()
         result = result.replace("\n", "")
         res_box.markdown(f'*{report}*')
     
